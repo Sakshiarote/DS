@@ -1,50 +1,49 @@
 #include <iostream>
 using namespace std;
 
-#define INF 9999
-
 int main() {
-    int n;
-    cout << "Enter number of locations: ";
-    cin >> n;
+    int V = 5;
 
-    int a[10][10];
-    cout << "Enter time matrix:\n";
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            cin >> a[i][j];
+    int graph[5][5] = {
+        {0, 10, 20, 0, 0},
+        {10, 0, 30, 5, 0},
+        {20, 30, 0, 15, 6},
+        {0, 5, 15, 0, 8},
+        {0, 0, 6, 8, 0}
+    };
 
-    int src;
-    cout << "Enter pizza shop location (source): ";
-    cin >> src;
+    int selected[5] = {0};
+    selected[0] = 1; // Start from first node
+    int edges = 0, total = 0;
 
-    int dist[10], visited[10] = {0};
+    cout << "Edge : Weight\n";
 
-    for (int i = 0; i < n; i++)
-        dist[i] = a[src][i];
-    dist[src] = 0;
-    visited[src] = 1;
+    while (edges < V - 1) {
+        int min = 999;
+        int x = 0, y = 0;
 
-    // Dijkstra algorithm
-    for (int k = 1; k < n; k++) {
-        int min = INF, u = -1;
-
-        for (int i = 0; i < n; i++)
-            if (!visited[i] && dist[i] < min) {
-                min = dist[i];
-                u = i;
+        // Find the minimum edge connecting selected and unselected vertex
+        for (int i = 0; i < V; i++) {
+            if (selected[i] == 1) {
+                for (int j = 0; j < V; j++) {
+                    if (selected[j] == 0 && graph[i][j] != 0) {
+                        if (graph[i][j] < min) {
+                            min = graph[i][j];
+                            x = i;
+                            y = j;
+                        }
+                    }
+                }
             }
+        }
 
-        visited[u] = 1;
-
-        for (int v = 0; v < n; v++)
-            if (!visited[v] && dist[u] + a[u][v] < dist[v])
-                dist[v] = dist[u] + a[u][v];
+        cout << x << " - " << y << " : " << graph[x][y] << endl;
+        total += graph[x][y];
+        selected[y] = 1;
+        edges++;
     }
 
-    cout << "\nMinimum delivery time from pizza shop:\n";
-    for (int i = 0; i < n; i++)
-        cout << "To location " << i << " = " << dist[i] << " mins\n";
+    cout << "\nMinimum time to connect all locations (MST Weight) = " << total << endl;
 
     return 0;
 }
