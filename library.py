@@ -1,35 +1,69 @@
-# Library Borrow Manager
+books = []
+borrow_counts = []
+members = []
 
-library_data = {
-    "M001": ["Book A", "Book B"],
-    "M002": ["Book C"],
-    "M003": [],
-    "M004": ["Book A", "Book A"],
-    "M005": [],
-    "M006": ["Book B", "Book D"]
-}
+while True:
+    print("\n---- Library Borrowing Management Menu ----")
+    print("1. Add Book Borrowing Records")
+    print("2. Compute Average Books Borrowed by Members")
+    print("3. Find Book with Highest and Lowest Borrowings")
+    print("4. Count Members Who Haven’t Borrowed Any Book")
+    print("5. Display Most Frequently Borrowed Book")
+    print("6. Exit")
 
-# 1. Average number of books borrowed
-total_books = sum(len(b) for b in library_data.values())
-average = total_books / len(library_data)
-print("Average books borrowed:", average)
+    choice = int(input("Enter your choice: "))
 
-# 2. Most & least borrowed books
-all_books = [book for books in library_data.values() for book in books]
+    if choice == 1:
+        n = int(input("Enter number of records to add: "))
+        for i in range(n):
+            member = input(f"\nEnter member name {i+1}: ")
+            book = input("Enter book title: ")
+            count = int(input("Enter number of times borrowed: "))
 
-book_counts = {}
-for book in all_books:
-    book_counts[book] = book_counts.get(book, 0) + 1
+            members.append(member)
+            books.append(book)
+            borrow_counts.append(count)
+        print("Records added successfully!")
 
-most_borrowed = max(book_counts, key=book_counts.get)
-least_borrowed = min(book_counts, key=book_counts.get)
+    elif choice == 2:
+        if not borrow_counts:
+            print("No records available.")
+        else:
+            avg = sum(borrow_counts) / len(borrow_counts)
+            print(f"Average number of books borrowed: {avg:.2f}")
 
-print("Most borrowed book:", most_borrowed)
-print("Least borrowed book:", least_borrowed)
+    elif choice == 3:
+        if not books:
+            print("No records available.")
+        else:
+            max_borrow = max(borrow_counts)
+            min_borrow = min(borrow_counts)
+            max_index = borrow_counts.index(max_borrow)
+            min_index = borrow_counts.index(min_borrow)
+            print(f"\nMost Borrowed Book: '{books[max_index]}' ({max_borrow} times)")
+            print(f"Least Borrowed Book: '{books[min_index]}' ({min_borrow} times)")
 
-# 3. Members with 0 borrowings
-zero_borrowers = sum(1 for books in library_data.values() if len(books) == 0)
-print("Members with 0 borrowings:", zero_borrowers)
+    elif choice == 4:
+        if not borrow_counts:
+            print("No records available.")
+        else:
+            zero_count = borrow_counts.count(0)
+            print(f"Number of members who have not borrowed any book: {zero_count}")
 
-# 4. Mode (same as most borrowed)
-print("Most frequently borrowed book (mode):", most_borrowed)
+    elif choice == 5:
+        if not books:
+            print("No records available.")
+        else:
+            book_freq = {}
+            for i in range(len(books)):
+                book_freq[books[i]] = book_freq.get(books[i], 0) + borrow_counts[i]
+
+            most_frequent = max(book_freq, key=book_freq.get)
+            print(f"Most Frequently Borrowed Book: '{most_frequent}' ({book_freq[most_frequent]} times)")
+
+    elif choice == 6:
+        print("Exiting program... Goodbye!")
+        break
+
+    else:
+        print("Invalid choice. Please try again.")
