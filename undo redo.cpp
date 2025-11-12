@@ -1,36 +1,69 @@
-#include <iostream>
-#include <stack>
-using namespace std;
+undo_stack = []   
+redo_stack = []  
+document = ""    
 
-int main() {
-    stack<string> undo, redo;
-    string doc = "", change;
 
-    int ch;
-    do {
-        cout << "\n1.Make Change  2.Undo  3.Redo  4.Display  5.Exit\n";
-        cin >> ch;
+def make_change(change):
+    global document
+    undo_stack.append(document) 
+    document += change
+    redo_stack.clear() 
+    print("Change applied successfully!")
 
-        if (ch == 1) {
-            cout << "Enter change: ";
-            cin >> change;
-            undo.push(doc);
-            doc = change;
-            while(!redo.empty()) redo.pop();
 
-        } else if (ch == 2 && !undo.empty()) {
-            redo.push(doc);
-            doc = undo.top();
-            undo.pop();
+def undo_action():
+    global document
+    if not undo_stack:
+        print("Nothing to undo!")
+    else:
+        last_state = undo_stack.pop()
+        redo_stack.append(document)
+        document = last_state
+        print("Undo completed!")
 
-        } else if (ch == 3 && !redo.empty()) {
-            undo.push(doc);
-            doc = redo.top();
-            redo.pop();
 
-        } else if (ch == 4) {
-            cout << "Document: " << doc << endl;
-        }
+def redo_action():
+    global document
+    if not redo_stack:
+        print("Nothing to redo!")
+    else:
+        last_state = redo_stack.pop()
+        undo_stack.append(document)
+        document = last_state
+        print("Redo completed!")
 
-    } while (ch != 5);
-}
+
+def display_document():
+    print("\n--- Current Document State ---")
+    print(document if document else "[Document is empty]")
+
+
+while True:
+    print("\n---- Text Editor Undo/Redo Menu ----")
+    print("1. Make a Change")
+    print("2. Undo Last Change")
+    print("3. Redo Last Change")
+    print("4. Display Document State")
+    print("5. Exit")
+
+    choice = int(input("Enter your choice: "))
+
+    if choice == 1:
+        change = input("Enter text to add to the document: ")
+        make_change(change)
+
+    elif choice == 2:
+        undo_action()
+
+    elif choice == 3:
+        redo_action()
+
+    elif choice == 4:
+        display_document()
+
+    elif choice == 5:
+        print("Exiting... Goodbye!")
+        break
+
+    else:
+        print("Invalid choice. Please try again.")
